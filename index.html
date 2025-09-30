@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raiku Quiz</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+  }
+  .quiz-container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  }
+  h1 {
+    text-align: center;
+    color: #1e3a8a;
+  }
+  .question {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f9fafb;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+  }
+  .options button:hover {
+    background: #e0f2fe;
+  }
+  .options button.correct { background: #d1fae5; border-color: #10b981; }
+  .options button.wrong { background: #fee2e2; border-color: #ef4444; }
+  #submit {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  #score { margin-top: 20px; font-weight: bold; font-size: 18px; color: #1e40af; }
+  .correct-index { font-size: 14px; color: #475569; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="quiz-container">
+  <h1>Raiku Quiz</h1>
+  <div id="quiz"></div>
+  <button id="submit">Submit</button>
+  <div id="score"></div>
+</div>
+
+<script>
+const questions = [
+  { q: "What blockchain does Raiku primarily build on?", options: ["Ethereum", "Solana", "Bitcoin", "Polkadot"], answer: "Solana" },
+  { q: "Which Raiku feature optimizes block inclusion and scheduling?", options: ["Coordination Engine", "Validator Sidecar", "Slot Marketplace", "Developer Docs"], answer: "Coordination Engine" },
+  { q: "Which industry is mentioned as a Raiku use case?", options: ["Healthcare", "Gaming", "Textiles", "Retail"], answer: "Gaming" },
+  { q: "What does Raiku provide for developers?", options: ["Edge compute and SDKs", "Mining pools", "NFT marketplace", "Centralized exchange"], answer: "Edge compute and SDKs" },
+  { q: "Raiku ensures transaction reliability with:", options: ["Random confirmations", "Pre-confirmations", "Manual approvals", "Delayed execution"], answer: "Pre-confirmations" },
+  { q: "Raiku's coordination engine delivers:", options: ["Slot auctions", "Transaction scheduling", "Guaranteed inclusion", "All of the above"], answer: "All of the above" },
+  { q: "Raiku's validator sidecar is:", options: ["A modified version of the Solana validator node", "A separate blockchain", "An AI-powered tool", "None of the above"], answer: "A modified version of the Solana validator node" },
+  { q: "Raiku's slot marketplace is:", options: ["A fair and efficient marketplace for blockspace", "An NFT platform", "A gaming hub", "A financial exchange"], answer: "A fair and efficient marketplace for blockspace" }
+];
+
+const letters = ["A", "B", "C", "D"];
+const quizDiv = document.getElementById('quiz');
+
+questions.forEach((q, i) => {
+  const qDiv = document.createElement('div');
+  qDiv.classList.add('question');
+  qDiv.innerHTML = `<strong>${i + 1}. ${q.q}</strong>`;
+  const optsDiv = document.createElement('div');
+  optsDiv.classList.add('options');
+  q.options.forEach((opt, index) => {
+    const btn = document.createElement('button');
+    btn.textContent = `${letters[index]}. ${opt}`;
+    btn.addEventListener('click', () => {
+      optsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+      if (opt === q.answer) { btn.classList.add('correct'); }
+      else { btn.classList.add('wrong'); }
+    });
+    optsDiv.appendChild(btn);
+  });
+  const correctIndexDiv = document.createElement('div');
+  correctIndexDiv.classList.add('correct-index');
+  correctIndexDiv.id = `correct-${i}`;
+  qDiv.appendChild(optsDiv);
+  qDiv.appendChild(correctIndexDiv);
+  quizDiv.appendChild(qDiv);
+});
+
+document.getElementById('submit').addEventListener('click', () => {
+  let score = 0;
+  questions.forEach((q, i) => {
+    const qDiv = document.querySelectorAll('.question')[i];
+    const buttons = qDiv.querySelectorAll('button');
+    let selected = false;
+    buttons.forEach(btn => {
+      if(btn.disabled && btn.textContent.includes(q.answer)){ selected = true; }
+    });
+    if(selected) score++;
+    const correctIndex = q.options.indexOf(q.answer);
+    document.getElementById(`correct-${i}`).textContent = `Correct option index: ${correctIndex}`;
+  });
+  document.getElementById('score').textContent = `You scored ${score} out of ${questions.length}`;
+});
+</script>
+</body>
+</html>
